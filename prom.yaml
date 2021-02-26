@@ -1,0 +1,99 @@
+Name:               prometheus-my-release-kube-prometheus-prometheus
+Namespace:          default
+CreationTimestamp:  Fri, 26 Feb 2021 22:05:08 +0800
+Selector:           app=prometheus,operator.prometheus.io/name=my-release-kube-prometheus-prometheus,operator.prometheus.io/shard=0,prometheus=my-release-kube-prometheus-prometheus
+Labels:             app.kubernetes.io/component=prometheus
+                    app.kubernetes.io/instance=my-release
+                    app.kubernetes.io/managed-by=Helm
+                    app.kubernetes.io/name=kube-prometheus
+                    helm.sh/chart=kube-prometheus-4.1.1
+                    operator.prometheus.io/name=my-release-kube-prometheus-prometheus
+                    operator.prometheus.io/shard=0
+Annotations:        meta.helm.sh/release-name: my-release
+                    meta.helm.sh/release-namespace: default
+                    prometheus-operator-input-hash: 18278115941256245915
+Replicas:           1 desired | 1 total
+Update Strategy:    RollingUpdate
+Pods Status:        1 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:           app=prometheus
+                    app.kubernetes.io/component=prometheus
+                    app.kubernetes.io/instance=my-release
+                    app.kubernetes.io/name=kube-prometheus
+                    operator.prometheus.io/name=my-release-kube-prometheus-prometheus
+                    operator.prometheus.io/shard=0
+                    prometheus=my-release-kube-prometheus-prometheus
+  Service Account:  my-release-kube-prometheus-prometheus
+  Containers:
+   prometheus:
+    Image:      docker.io/bitnami/prometheus:2.25.0-debian-10-r6
+    Port:       9090/TCP
+    Host Port:  0/TCP
+    Args:
+      --web.console.templates=/etc/prometheus/consoles
+      --web.console.libraries=/etc/prometheus/console_libraries
+      --config.file=/etc/prometheus/config_out/prometheus.env.yaml
+      --storage.tsdb.path=/prometheus
+      --storage.tsdb.retention.time=10d
+      --web.enable-lifecycle
+      --storage.tsdb.no-lockfile
+      --web.external-url=http://my-release-kube-prometheus-prometheus.default:9090/
+      --web.route-prefix=/
+    Readiness:    http-get http://:web/-/ready delay=0s timeout=3s period=5s #success=1 #failure=120
+    Environment:  <none>
+    Mounts:
+      /etc/prometheus/certs from tls-assets (ro)
+      /etc/prometheus/config_out from config-out (ro)
+      /etc/prometheus/rules/prometheus-my-release-kube-prometheus-prometheus-rulefiles-0 from prometheus-my-release-kube-prometheus-prometheus-rulefiles-0 (rw)
+      /prometheus from prometheus-my-release-kube-prometheus-prometheus-db (rw)
+   config-reloader:
+    Image:      docker.io/bitnami/prometheus-operator:0.46.0-debian-10-r0
+    Port:       8080/TCP
+    Host Port:  0/TCP
+    Command:
+      /bin/prometheus-config-reloader
+    Args:
+      --listen-address=:8080
+      --reload-url=http://127.0.0.1:9090/-/reload
+      --config-file=/etc/prometheus/config/prometheus.yaml.gz
+      --config-envsubst-file=/etc/prometheus/config_out/prometheus.env.yaml
+      --watched-dir=/etc/prometheus/rules/prometheus-my-release-kube-prometheus-prometheus-rulefiles-0
+    Limits:
+      cpu:     100m
+      memory:  50Mi
+    Requests:
+      cpu:     100m
+      memory:  50Mi
+    Environment:
+      POD_NAME:   (v1:metadata.name)
+      SHARD:     0
+    Mounts:
+      /etc/prometheus/config from config (rw)
+      /etc/prometheus/config_out from config-out (rw)
+      /etc/prometheus/rules/prometheus-my-release-kube-prometheus-prometheus-rulefiles-0 from prometheus-my-release-kube-prometheus-prometheus-rulefiles-0 (rw)
+  Volumes:
+   config:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  prometheus-my-release-kube-prometheus-prometheus
+    Optional:    false
+   tls-assets:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  prometheus-my-release-kube-prometheus-prometheus-tls-assets
+    Optional:    false
+   config-out:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+   prometheus-my-release-kube-prometheus-prometheus-rulefiles-0:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      prometheus-my-release-kube-prometheus-prometheus-rulefiles-0
+    Optional:  false
+   prometheus-my-release-kube-prometheus-prometheus-db:
+    Type:       EmptyDir (a temporary directory that shares a pod's lifetime)
+    Medium:     
+    SizeLimit:  <unset>
+Volume Claims:  <none>
+Events:
+  Type    Reason            Age   From                    Message
+  ----    ------            ----  ----                    -------
+  Normal  SuccessfulCreate  10m   statefulset-controller  create Pod prometheus-my-release-kube-prometheus-prometheus-0 in StatefulSet prometheus-my-release-kube-prometheus-prometheus successful

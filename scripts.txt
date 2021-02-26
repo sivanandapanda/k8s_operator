@@ -1,0 +1,18 @@
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm install my-release bitnami/kube-prometheus
+
+#prometheus ui
+kubectl port-forward --namespace default svc/my-release-kube-prometheus-prometheus 9090:9090
+
+kubectl describe statefulset alertmanager-my-release-kube-prometheus-alertmanager > alertmanager.yaml
+kubectl get statefulset alertmanager-my-release-kube-prometheus-alertmanager -o yaml > alertmanager_o.yaml                                                                      
+
+kubectl describe statefulset prometheus-my-release-kube-prometheus-prometheus > prom.yaml
+kubectl get statefulset prometheus-my-release-kube-prometheus-prometheus -o yaml > prom_o.yaml                                                                                  
+
+kubectl describe deployment my-release-kube-prometheus-operator > operator.yaml
+kubectl get deployment my-release-kube-prometheus-operator -o yaml > operator_o.yaml                                                                                            
+
+kubectl get configmap prometheus-my-release-kube-prometheus-prometheus-rulefiles-0 -o yaml > configmap.yaml
+
+kubectl get secret prometheus-my-release-kube-prometheus-prometheus -o yaml > secret.yaml

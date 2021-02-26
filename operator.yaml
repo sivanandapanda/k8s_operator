@@ -1,0 +1,51 @@
+Name:                   my-release-kube-prometheus-operator
+Namespace:              default
+CreationTimestamp:      Fri, 26 Feb 2021 22:04:31 +0800
+Labels:                 app.kubernetes.io/component=operator
+                        app.kubernetes.io/instance=my-release
+                        app.kubernetes.io/managed-by=Helm
+                        app.kubernetes.io/name=kube-prometheus
+                        helm.sh/chart=kube-prometheus-4.1.1
+Annotations:            deployment.kubernetes.io/revision: 1
+                        meta.helm.sh/release-name: my-release
+                        meta.helm.sh/release-namespace: default
+Selector:               app.kubernetes.io/component=operator,app.kubernetes.io/instance=my-release,app.kubernetes.io/name=kube-prometheus
+Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:           app.kubernetes.io/component=operator
+                    app.kubernetes.io/instance=my-release
+                    app.kubernetes.io/managed-by=Helm
+                    app.kubernetes.io/name=kube-prometheus
+                    helm.sh/chart=kube-prometheus-4.1.1
+  Service Account:  my-release-kube-prometheus-operator
+  Containers:
+   prometheus-operator:
+    Image:      docker.io/bitnami/prometheus-operator:0.46.0-debian-10-r0
+    Port:       8080/TCP
+    Host Port:  0/TCP
+    Args:
+      --kubelet-service=kube-system/my-release-kube-prometheus-kubelet
+      --log-format=logfmt
+      --log-level=info
+      --localhost=127.0.0.1
+      --prometheus-config-reloader=$(PROMETHEUS_CONFIG_RELOADER)
+    Liveness:   http-get http://:http/metrics delay=120s timeout=5s period=10s #success=1 #failure=6
+    Readiness:  http-get http://:http/metrics delay=30s timeout=5s period=10s #success=1 #failure=6
+    Environment:
+      PROMETHEUS_CONFIG_RELOADER:  <set to the key 'prometheus-config-reloader' of config map 'my-release-kube-prometheus-operator'>  Optional: false
+    Mounts:                        <none>
+  Volumes:                         <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   my-release-kube-prometheus-operator-646849bd95 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  22m   deployment-controller  Scaled up replica set my-release-kube-prometheus-operator-646849bd95 to 1
